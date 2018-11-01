@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>HTML5 Audio</title>
+<link href="coin.css" rel="stylesheet" type="text/css">
+<script src="anime.min.js"></script>
+<script src="coin.js" charset="utf-8"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<title>コイン推定マシン</title>
+</head>
+<body onload="Initialize()">
+<div class="title">コイン推定AI</div>
+<div class="subscribe">スタートボタンを押して4秒以内に、コインを落としてその音をマイクに入力してください。<br>AIがその音を聞いて、落とされたコインの種類を当てます。</div>
+<input class="button" type="button" style="font:10.5pt Arial;" value="Let's Drop a Coin!" onclick="Initialize();Record();" /><br><br>
+<canvas id="canvas" width="500" height="200"></canvas>
+<div class="result_is">This coin is . . .</div>
+<div class="result">
+	<div class="yen1">1円</div>
+	<div class="yen5">5円</div>
+	<div class="yen10">10円</div>
+	<div class="yen50">50円</div>
+	<div class="yen100">100円</div>
+	<div class="yen500">500円</div>
+</div>
+
+</body>
+</html>

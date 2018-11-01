@@ -1,0 +1,33 @@
+.title{
+	margin-left:60px;
+	width:200px;
+	font-size:25px;
+	background-color:#ffddff;
+}
+.subscribe{
+	background-color:#ddffff;
+	width:600px;
+}
+.button{
+	margin-top:20px;
+	margin-left:40px;
+	height:50px;
+	width:300px;
+}
+#canvas{
+	margin-left:20px;
+}
+.result_is{
+	font-size:20px;
+	color:#000000;
+}
+.result{
+	margin-left:40px;
+	font-size:20px;
+	color:#000000;
+}
+.yen1, .yen5, .yen10, .yen50, .yen100, .yen500{
+	opacity:0.45;
+	float:left;
+	margin-left:15px;
+}
