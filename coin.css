@@ -27,7 +27,15 @@
 	color:#000000;
 }
 .yen1, .yen5, .yen10, .yen50, .yen100, .yen500{
-	opacity:0.45;
+  display: inline-block;
+	opacity:0.35;
 	float:left;
+  text-align:center;
+  line-height: 60px;
+  vertical-align: middle;
 	margin-left:15px;
+	height:60px;
+	width:60px;
+	border-radius: 50%;
+    background: #dddddd;
 }

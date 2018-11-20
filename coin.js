@@ -1,6 +1,13 @@
 //. ブラウザによる差異を吸収
-//. 将来的にはnavigator.mediaDevices.getuUserMediaに移行
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+//navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+navigator.mediaDevices = navigator.mediaDevices || ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+   getUserMedia: function(c) {
+     return new Promise(function(y, n) {
+       (navigator.mozGetUserMedia ||
+        navigator.webkitGetUserMedia).call(navigator, c, y, n);
+     });
+   }
+} : null);
 window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
 
 //. バッファサイズ等
@@ -241,7 +248,7 @@ function Initialize(){
 	for(var i=0;i<6;i++){
 		animation.add({
 			targets:coin_txt[i],
-			opacity:0.45,
+			opacity:0.35,
 			easing:"linear",
 			duration:0
 		});
@@ -258,9 +265,7 @@ function Initialize(){
 
 //. 録音
 function Record(){
-	navigator.getUserMedia(
-    { audio: true },
-    function( stream ){
+	navigator.mediaDevices.getUserMedia({ audio: true }).then(function( stream ){
     	//. 録音中の音声処理
 
     	//var options = {mimeType: 'video/webm;codecs=vp9'};
@@ -306,9 +311,9 @@ function Record(){
     	audioAnalyser = audioContext.createAnalyser();
     	audioAnalyser.fftSize = 2048;
     	mediastreamsource.connect(audioAnalyser);
-    },function( e ){
-    	console.log( e );
-    });
+	}).catch(function( e ){
+	      console.log( e );
+	    });
 }
 
 //. 繰り返し呼ばれる処理
