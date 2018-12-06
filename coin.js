@@ -287,10 +287,12 @@ function Record(){
     	//録音停止後の動作
     	mediaRecorder.addEventListener('stop', function() {
     		//録音音声の解析
-    		var predCoin = coinEstimation(recordedChunks[0]);
-    		console.log(timer-timer_s);
-    		// 結果のコインを表示
-    		showEstimatedCoin(predCoin);
+        	setTimeout(function(){
+        		var predCoin = coinEstimation(recordedChunks[0]);
+        		console.log(timer-timer_s);
+        		// 結果のコインを表示
+        		showEstimatedCoin(predCoin);
+        	},2000);
     	});
     	// 録音開始
     	mediaRecorder.start();
@@ -370,7 +372,7 @@ function coinEstimation(wave){
 	var feature = makeFeature(wave);//コインクラスの推定
 	// [1円,5円,10円,50円,100円,500円]の確率
     var predCoin = (new Array(6)).fill(0);
-    for(var idx=0;idx<periods;idx++){
+    for(var idx=0;idx<feature.length;idx++){
   	  	var tempF = [];
   	  	for(var i=0;i<periods;i++){
   		  	tempF[i] = feature[idx][D[i]];
@@ -438,7 +440,7 @@ function makeFeature(wave) {
 	
 	// 最初のOn periodを求める
 	
-	var flag = 0;
+	flag = 0;
 	var firstON=0;
 	var loudness;
 	
@@ -456,11 +458,12 @@ function makeFeature(wave) {
 	 //console.log(waveform.slice(BinSize * step, BinSize * (step + 1)));
 	 loudness = detectLoudness(waveform.slice(BinSize * step ,BinSize * (step + 1)));
 	 console.log("loudness"+String(loudness));
-	 if((loudness >= 30) & (flag == 1)) {
+	 if(loudness >= 10){
+	 //if((loudness >= 10) & (flag == 1)) {
 	   firstON = step;
 	   break;
 	 }
-	 if (loudness <= 30) {
+	 if (loudness <= 10) {
 	   flag = 1;
 	 }
 	}
