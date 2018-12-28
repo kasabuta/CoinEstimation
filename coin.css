@@ -1,41 +1,118 @@
 .title{
-	margin-left:60px;
-	width:200px;
+	margin-left:30px;
+	padding-left:30px;
+	width:190px;
 	font-size:25px;
-	background-color:#ffddff;
+	background-color:#cd5557;
+	color:#FFFFFF;
 }
 .subscribe{
-	background-color:#ddffff;
-	width:600px;
+	margin-left:30px;
+	background-color:#468ace;
+	width:640px;
+	color:#FFFFFF;
+	padding:5px;
 }
-.button{
-	margin-top:20px;
-	margin-left:40px;
-	height:50px;
-	width:300px;
-}
-#canvas{
-	margin-left:20px;
-}
-.result_is{
-	font-size:20px;
+.bottom_subscribe{
+	margin-left:30px;
+	background-color:#bfc4e8;
+	width:640px;
 	color:#000000;
+	padding:5px;
+	clear: left;
 }
-.result{
-	margin-left:40px;
-	font-size:20px;
-	color:#000000;
-}
-.yen1, .yen5, .yen10, .yen50, .yen100, .yen500{
-  display: inline-block;
-	opacity:0.35;
+
+.left-box{
 	float:left;
+	height:620px;
+}
+.hand img{
+	height:130px;
+	object-fit: contain;
+}
+.fall1 img{
+	margin-left:115px;
+	width:35px;
+	height:35px;
+	margin-top:22px;
+	margin-bottom:22px;
+	object-fit: contain;
+}
+.fall2 img{
+	margin-left:110px;
+	width:45px;
+	height:45px;
+	margin-top:23px;
+	margin-bottom:23px;
+	object-fit: contain;
+}
+.fall3 img{
+	margin-left:105px;
+	width:55px;
+	height:55px;
+	margin-top:23px;
+	margin-bottom:23px;
+	object-fit: contain;
+}
+.ring img{
+	margin-left:85px;
+	width:90px;
+	height:90px;
+	object-fit: contain;
+}
+
+
+.button{
+	margin-top:15px;
+	margin-left:10px;
+	height:50px;
+	width:200px;
+}
+#result{
+  display: inline-block;
+	opacity:1;
   text-align:center;
-  line-height: 60px;
+  line-height: 80px;
   vertical-align: middle;
-	margin-left:15px;
-	height:60px;
-	width:60px;
+	margin-left:210px;
+	margin-bottom:10px;
+	height:80px;
+	width:80px;
 	border-radius: 50%;
     background: #dddddd;
+}
+#yen1, #yen5, #yen10, #yen50, #yen100, #yen500{
+  display: inline-block;
+	opacity:0.6;
+  text-align:center;
+  line-height: 50px;
+  vertical-align: middle;
+	margin-left:20px;
+	height:50px;
+	width:50px;
+	border-radius: 50%;
+    background: #dddddd;
+}
+#yenundetectable{
+  display: inline-block;
+	opacity:0.6;
+  text-align:center;
+  vertical-align: middle;
+	margin-left:20px;
+	height:50px;
+	width:50px;
+	border-radius: 50%;
+    background: #dddddd;
+    font-size:10px;
+}
+.result_prob, .result_prob_title{
+  display: flex;
+	width:510px;
+}
+#pro_yen1, #pro_yen5, #pro_yen10, #pro_yen50, #pro_yen100, #pro_yen500, #pro_yenundetectable{
+  	display: inline-block;
+  	text-align:center;
+	margin-left:20px;
+	height:50px;
+	width:50px;
 }

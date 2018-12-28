@@ -12,18 +12,45 @@
 </head>
 <body onload="Initialize()">
 <div class="title">コイン推定AI</div>
-<div class="subscribe">スタートボタンを押して4秒以内に、コインを落としてその音をマイクに入力してください。<br>AIがその音を聞いて、落とされたコインの種類を当てます。</div>
-<input class="button" type="button" style="font:10.5pt Arial;" value="Let's Drop a Coin!" onclick="Initialize();Record();" /><br><br>
-<canvas id="canvas" width="500" height="200"></canvas>
-<div class="result_is">This coin is . . .</div>
-<div class="result">
-	<div class="yen1">1円</div>
-	<div class="yen5">5円</div>
-	<div class="yen10">10円</div>
-	<div class="yen50">50円</div>
-	<div class="yen100">100円</div>
-	<div class="yen500">500円</div>
+<div class="subscribe">ボタンを押して3秒以内にコインを落としてその音をマイクに入力してください．<br>AIがその音を聞いて落とされたコインの種類を当てます．</div>
+<div class="left-box">
+	<div class="hand"><img src="images/hand1.png"></div>
+	<div class="fall1"><img src="images/falling_coin1.png"></div>
+	<div class="fall2"><img src="images/falling_coin2.png"></div>
+	<div class="fall3"><img src="images/falling_coin1.png"></div>
+	<div class="ring"><img src="images/ringing_coin1.png"></div>
 </div>
+<div class="right-box">
+	<input class="button" type="button" style="font:10.5pt Arial;" value="Drop a Coin" onclick="Initialize();Record();" /><br>
+	<div class="canvas_rec"><canvas id="canvas1" width="500" height="170"></canvas>	</div>
+	<div class="canvas_spe"><canvas id="canvas2" width="500" height="170"></canvas></div>
+	<div id="result"></div>
+	<div class="result_prob_title">
+		<div id="yen1">1円</div>
+		<div id="yen5">5円</div>
+		<div id="yen10">10円</div>
+		<div id="yen50">50円</div>
+		<div id="yen100">100円</div>
+		<div id="yen500">500円</div>
+		<div id="yenundetectable"><br>undetec-<br>table</div>
+	</div>
+	<div class="result_prob">
+		<div id="pro_yen1">%</div>
+		<div id="pro_yen5">%</div>
+		<div id="pro_yen10">%</div>
+		<div id="pro_yen50">%</div>
+		<div id="pro_yen100">%</div>
+		<div id="pro_yen500">%</div>
+		<div id="pro_yenundetectable">%</div>
+	</div>
+</div>
+<div class="bottom_subscribe">ここにreferenceなどの説明が入ります．</div>
+	<input type="button" style="font:10.5pt Arial;" value="Test001" onclick="Initialize();Test('001-001.wav');" />
+	<input type="button" style="font:10.5pt Arial;" value="Test005" onclick="Initialize();Test('005-001.wav');" />
+	<input type="button" style="font:10.5pt Arial;" value="Test010" onclick="Initialize();Test('010-004.wav');" />
+	<input type="button" style="font:10.5pt Arial;" value="Test050" onclick="Initialize();Test('050-033.wav');" />
+	<input type="button" style="font:10.5pt Arial;" value="Test100" onclick="Initialize();Test('100-020.wav');" />
+	<input type="button" style="font:10.5pt Arial;" value="Test500" onclick="Initialize();Test('500-095.wav');" /><br>
 
 </body>
 </html>
