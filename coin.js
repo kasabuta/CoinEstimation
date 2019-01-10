@@ -1754,7 +1754,7 @@ var max_volume;
 var sampleRate=0;
 //音声解析
 var audioAnalyser = null;
- 
+
 function Initialize(){
 	audioData_spec = [];	//録音データ
 	audioData_wave = [];	//録音データ
@@ -1812,7 +1812,7 @@ function Initialize(){
 	var max_freq=2200;
 	for(var i=0;i<=max_freq/500;i++){
 		//var text = (s < 1000) ? (s + ' ms') : ((s / 1000) + ' s');
-		var text = String(i*500) + ' Hz';
+		var text = String(i*5000) + ' Hz';
 		var x=graph_margin+((canvas.width-graph_margin*2)/(max_freq/500))*i;
 		// Draw text (X)
 		canvasContext.fillText(text, x-8, canvas.height);
@@ -1877,8 +1877,9 @@ function Record(){
     		var predCoin=comb[0];
     		var spec=comb[1];
     		var max_spec = comb[2];
+    		var min_spec = comb[3];
     		// 結果のコインを表示
-    		showSpectrogram(spec,max_spec);
+    		showSpectrogram(spec,max_spec,min_spec);
     		showEstimatedCoin(predCoin);
     	});
     	// 録音開始
@@ -1911,13 +1912,15 @@ function onAudioProcess( e ){
 	//録音処理
 	//. 取得した周波数成分データ
     var spectrums = new Float32Array(audioAnalyser.frequencyBinCount);
-    var wave = new Uint8Array(audioAnalyser.frequencyBinCount);
+    //var wave = new Uint8Array(audioAnalyser.frequencyBinCount);
+    var wave = new Float32Array(audioAnalyser.frequencyBinCount);
     audioAnalyser.getFloatFrequencyData(spectrums);
-    audioAnalyser.getByteTimeDomainData(wave);
+    //audioAnalyser.getByteTimeDomainData(wave);
+    audioAnalyser.getFloatTimeDomainData(wave);
     // これまでのデータに追加
     audioData_spec.push(spectrums);
     time_stamp.push(timer-timer_s);
-    //Array.prototype.push.apply(audioData_wave,wave);
+    Array.prototype.push.apply(audioData_wave,wave);
 	
 	// グラフの描画(音量を取ると同時にonFlagも設定)
 	Draw_graph(wave);
@@ -1941,7 +1944,8 @@ var Draw_graph = function(wave){
 	for (var i = 0; i < wave.length; i+=30) {
 		//canvasにおさまるように線を描画
 		var x = xs + (xe-xs)/wave.length*i;
-		var y = canvas.height/2 + (wave[i]-128)/256 * canvas.height;
+		//var y = canvas.height/2 + (wave[i]-128)/256 * canvas.height;
+		var y = canvas.height/2 + wave[i] * 200;
 		if(y>canvas.height-graph_margin){
 			y=canvas.height-graph_margin;
 		}else if(y<graph_margin){
@@ -1960,8 +1964,10 @@ var Draw_graph = function(wave){
 
 function coinEstimation(){
 	var feature = makeFeature();//コインクラスの推定
+	console.log(feature[0]);
 	var spec=[];
-	var max_spec=-100;
+	var max_spec=-Infinity;
+	var min_spec=Infinity;
 	// [1円,5円,10円,50円,100円,500円,undetectable]の確率
     var predCoin = (new Array(7)).fill(0);
     for(var i=0;i<feature[0].length;i++){
@@ -1971,6 +1977,9 @@ function coinEstimation(){
     	}
     	if(max_spec<spec[i]){
     		max_spec=spec[i];
+    	}
+    	if(min_spec>spec[i]){
+    		min_spec=spec[i];
     	}
     }
     for(var idx=0;idx<feature.length;idx++){
@@ -1987,11 +1996,11 @@ function coinEstimation(){
   	  		}
   	  		//predCoin[ makePrediction(tempF) ] += 1;
   	  	}
-	  	console.log(pred_prob);
-	  	console.log(argMax(pred_prob));
+	  	//console.log(pred_prob);
+	  	//console.log(argMax(pred_prob));
     }
     
-	return [predCoin, spec, max_spec];
+	return [predCoin, spec, max_spec, min_spec];
 }
 
 function showEstimatedCoin(coin){
@@ -2041,7 +2050,7 @@ function showEstimatedCoin(coin){
 	return;
 }
 
-function showSpectrogram(spec,max_spec){
+function showSpectrogram(spec,max_spec,min_spec){
 	//キャンバス情報の取得
 	var canvas = document.getElementById('canvas1');
 	var canvasContext = canvas.getContext('2d');
@@ -2074,7 +2083,7 @@ function showSpectrogram(spec,max_spec){
 	var max_freq=2200;
 	for(var i=0;i<=max_freq/500;i++){
 		//var text = (s < 1000) ? (s + ' ms') : ((s / 1000) + ' s');
-		var text = String(i*500) + ' Hz';
+		var text = String(i*5000) + ' Hz';
 		var x=graph_margin+((canvas.width-graph_margin*2)/(max_freq/500))*i;
 		// Draw text (X)
 		canvasContext.fillText(text, x-8, canvas.height);
@@ -2085,6 +2094,7 @@ function showSpectrogram(spec,max_spec){
 	canvasContext.fillRect(canvas.width-graph_margin, graph_margin, 1, canvas.height-graph_margin*2);
 	canvasContext.stroke();
 
+	// 周波数成分の表示
 	var grd = canvasContext.createLinearGradient(graph_margin,graph_margin,graph_margin,canvas.height-graph_margin);
 	//grd.addColorStop(0,"magenta");
 	//grd.addColorStop(1,"aqua");
@@ -2098,12 +2108,12 @@ function showSpectrogram(spec,max_spec){
     canvasContext.fill();
     canvasContext.closePath();
 	canvasContext.stroke();
-	
+
     canvasContext.strokeStyle = 'white';
 	canvasContext.beginPath();
 	for(var i=0;i<spec.length;i++){
 		var x = graph_margin + (canvas.width-graph_margin*2)*(i/spec.length);
-		var y = (max_spec-spec[i])/max_spec*(-1)*(canvas.height-graph_margin*2)
+		var y = (max_spec-spec[i])/(max_spec-min_spec)*(canvas.height-graph_margin*2);
 		if(y>canvas.height-graph_margin-1){
 			y=canvas.height-graph_margin-1;
 		}else if(y<graph_margin+1){
@@ -2125,6 +2135,7 @@ function showSpectrogram(spec,max_spec){
 	canvasContext.stroke();
 }
 
+/*
 //特徴ベクトルの作成
 function makeFeature() {
 	bin_max=audioData_spec.length;
@@ -2160,20 +2171,61 @@ function makeFeature() {
 	}
 	return featureVector;	//スペクトル分解した要素の配列が返る
 }
-
+*/
+// 特徴ベクトルの作成
+function makeFeature() {
+	//bin_max=audioData_wave.length;
+	var wav_len = audioData_wave.length;
+	var wav_data = [];
+	for(var i=0;wav_len>Math.floor(i*sampleRate*0.05);i++){
+		wav_data[i] = audioData_wave.slice(i*sampleRate*0.05,(i+1)*sampleRate*0.05);
+	}
+	var featureVector = [];
+	var loudness=[];
+	for(var i=0;i<wav_data.length;i++){
+		loudness[i] = 0;
+		for(var j=0;j<wav_data[i].length;j++){
+			loudness[i] += Math.abs(wav_data[i][j]-128);
+		}
+	}
+	var loud_order=[];
+	var sorted_loudness=loudness.slice().sort((a, b) => b - a);
+	for(var i=0;i<loudness.length;i++){
+		for(var j=0;j<loudness.length;j++){
+			if(loudness[i]==sorted_loudness[j]){
+				loud_order[i]=j;
+				break;
+			}
+		}
+	}
+	var specLog;
+	var count=0;
+	for(var i=0;i<loud_order.length;i++){
+		if(loud_order[i]<bin_num){
+			 Array.prototype.push.apply(featureVector, [culSpectrum(wav_data[i])[0].slice(0,1858)]);
+			 select_bin[count]=i;
+			 if(loudness[i]>-60){
+				 bin_flag[count]=1;
+			 }else{
+				 bin_flag[count]=0;
+			 }
+			 count++;
+		}
+	}
+	//document.getElementById("sand").innerHTML = featureVector[3];
+	return featureVector;	//スペクトル分解した要素の配列が返る
+}
 
 // コイン推定の実装
-
 // 周波数成分を求める
 function culSpectrum(wave) {
   var fftSize = 2 ** (nextpow2(wave.length));
   // 振幅を信号長で正規化
-  // var src = wave.map(w => w / wave.length);
-  var src = wave.map(w => w);
-
+  var src = wave.map(w => w / wave.length);
+  //var src = wave.map(w => w);
   // FFT変換
   var spectrum = fft(src, fftSize).map(x => Math.abs(x));
-  spectrum.map(x => x / sum(spectrum));
+  spectrum = spectrum.map(x => x / sum(spectrum));
 
   //対数振幅スペクトル導出
   var specLog;
@@ -2205,7 +2257,7 @@ function makePrediction(feature) {
 	var max_dist=-Infinity;
 	var min_dist=Infinity;
 	var x = feature;
-	  for(var c = 0; c < numClass; c++) {
+	for(var c = 0; c < numClass; c++) {
 	    var sigmaC = sigma[c];
 	    var muC = mu[c];
 	    var detSigmaC = detSigma[c];
@@ -2218,10 +2270,9 @@ function makePrediction(feature) {
 	    }
 
     	log_dist[c] += Math.log((2 * Math.PI) ** (-d / 2.0) * detSigmaC ** (-0.5));
-	    for(var i=0;i<invSigma.length;i++){
-	    	log_dist[c] -= prodMatrix([x_muC], invSigmaC)[0][i] * muC[i] / 2;
+	    for(var i=0;i<x_muC.length;i++){
+	    	log_dist[c] -= prodMatrix([x_muC], invSigmaC)[0][i] * x_muC[i] / 2;
 	    }
-	    console.log(log_dist[c])
 	    if(max_dist<log_dist[c]){
 	    	max_dist=log_dist[c];
 	    }
@@ -2229,7 +2280,7 @@ function makePrediction(feature) {
 	    	min_dist=log_dist[c];
 	    }
 	    //log_dist[c] += Math.log((2 * Math.PI) ** (-d / 2.0) * detSigmaC ** (-0.5)) - prodMatrix(prodMatrix([x_muC], invSigmaC), mut)[0][0] / 2;
-	  }
+	}
 	//var pred_class = argMax(log_dist);
 	//return pred_class;
 
@@ -2290,6 +2341,12 @@ function sum(arr) {
     return prev + current;
   });
 }
+
+function sum_abs(arr) {
+	  return arr.reduce(function(prev, current, i, arr) {
+	    return prev + Math.abs(current);
+	  });
+	}
 
 function sqsum(arr) {
 	  return arr.reduce(function(prev, current, i, arr) {
@@ -2520,8 +2577,9 @@ function Test(file){
 	    		var predCoin=comb[0];
 	    		var spec=comb[1];
 	    		var max_spec = comb[2];
+	    		var min_spec = comb[3];
 	    		// 結果のコインを表示
-	    		showSpectrogram(spec,max_spec);
+	    		showSpectrogram(spec,max_spec,min_spec);
 	    		showEstimatedCoin(predCoin);
 		  }
 		};
